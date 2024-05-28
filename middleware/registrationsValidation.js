@@ -1,16 +1,13 @@
 const Joi = require('joi');
-
 const signupSchema = Joi.object({
-    number: Joi.number().integer().required(),
-    pin: Joi.number().integer().required(),
-    
-    
-     
+    name: Joi.string().min(3).max(30).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required()
 });
 
 const loginSchema = Joi.object({
-    number: Joi.number().integer().required(),
-    pin: Joi.number().integer().required()
+    email: Joi.string().email().required(),
+    password: Joi.string().required()
 });
 
 const validateSignup = async (req, res, next) => {

@@ -5,11 +5,13 @@ const Location=require('./db/models/location')
 const Partners=require('./db/models/partners')
 const formElements=require('./db/models/formElement')
 const formOptions=require('./db/models/formOptions')
+const registrations=require('./db/models/registrations')
 const express=require ('express')
 const bodyParser=require('body-parser')
 const cors=require("cors")
 const app = express();
 const userRoute=require('./routes/userRoute');
+const registrationsRoute=require('./routes/registrationsRoute');
 const ZoneRoute=require('./routes/zoneRoute');
 const LocationRoute=require('./routes/locationRoute');
 const PartnerRoute=require('./routes/partnerRoute');
@@ -40,5 +42,6 @@ app.use("/",ZoneRoute);
 app.use("/",LocationRoute);
 app.use("/",PartnerRoute);
 app.use("/",formRoute);
+app.use("/",registrationsRoute);
 // app.use("/",optionRoute);
 app.listen(3001, () => console.log('Server is running on http://localhost:3001'));

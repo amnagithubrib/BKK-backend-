@@ -4,32 +4,32 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const userService = {
-    async createUser({ name, email, password }) {
+    async createUser({ number,pin }) {
         try {
-            const existingUser = await User.query().findOne({ email });
+            const existingUser = await User.query().findOne({ number });
             if (existingUser) {
-                throw new Error('Email already in use');
+                throw new Error('number already in use');
             }
-            const hashedPassword = await bcrypt.hash(password, 10);
+            //const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = await User.query().insert({
-                name,
-                email,
-                password: hashedPassword
+                number,
+                pin,
+                // password: hashedPassword
             });
-            return { id: newUser.id, name: newUser.name, email: newUser.email };
+            return { id: newUser.id, number: newUser.number };
         } catch (error) {
             console.error("Error creating user:", error);
             throw error;
         }
     },
 
-    async loginUser({ email, password }) {
+    async loginUser({ number, pin }) {
         try {
-            const user = await User.query().findOne({ email });
+            const user = await User.query().findOne({ number });
             if (!user) {
                 throw new Error('No user found with this email');
             }
-            const isMatch = await bcrypt.compare(password, user.password);
+            // const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 throw new Error('Invalid credentials');
             }

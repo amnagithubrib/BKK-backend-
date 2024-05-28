@@ -6,6 +6,13 @@ exports.up = function(knex) {
   return knex.schema
     .createTable('users', table => {
       table.increments('id');
+      table.bigInteger('number').notNullable().unique();
+      // table.string('email').notNullable().unique();
+      table.integer('pin').notNullable();
+      table.timestamps(true, true);
+    })
+    .createTable('registrations', table => {
+      table.increments('id');
       table.string('name').notNullable();
       table.string('email').notNullable().unique();
       table.string('password').notNullable();
@@ -43,7 +50,7 @@ exports.up = function(knex) {
       table.integer('element_id').unsigned().references('elementId').inTable('formElements').onDelete('CASCADE'); 
       table.string('optionText').notNullable(); 
       table.string('optionValue').notNullable();
-      table.enum('type', ['text', 'checkbox', 'radio', 'switch']).notNullable();
+      // table.enum('type', ['text', 'checkbox', 'radio', 'switch']).notNullable();
       table.timestamps(true, true);
     });
 };
@@ -58,6 +65,7 @@ exports.down = function(knex) {
     .dropTableIfExists('locations')
     .dropTableIfExists('zones')
     .dropTableIfExists('partners')
-    .dropTableIfExists('users');
+    .dropTableIfExists('users')
+    .dropTableIfExists('registrations');
 };
 

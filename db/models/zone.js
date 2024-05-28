@@ -1,6 +1,6 @@
 const { Model } = require('objection');
 const Locations = require('./location');
-const Partners= require('./partners');  // make sure this path is correct
+const Partners= require('./partners');  
 
 class Zones extends Model {
     static get tableName() {
@@ -8,7 +8,7 @@ class Zones extends Model {
     }
 
     static get idColumn() {
-        return 'id';  // This explicitly defines the primary key column
+        return 'id'; 
     }
 
     static get jsonSchema() {

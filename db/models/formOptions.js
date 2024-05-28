@@ -8,7 +8,7 @@ class FormOption extends Model {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['optionText', 'optionValue','type', 'element_id'],
+      required: ['optionText', 'optionValue', 'element_id'],
       properties: {
         id: { type: 'integer' },
         optionText: { type: 'string' },

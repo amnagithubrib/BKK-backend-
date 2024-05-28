@@ -11,8 +11,8 @@ class FormService {
           options: formOptionData.map(option => ({
             optionText: option.optionText,
             optionValue: option.optionValue,
-            type: option.type,
-            element_id: formElementData.elementId // Link options to the form element
+            // type: option.type,
+            element_id: formElementData.elementId 
           }))
         });
 
@@ -45,6 +45,18 @@ class FormService {
     }
   }
 }
+
+
+// static async getAllFormElements() {
+//   try {
+//       const formElements = await FormElement.query(); // Fetch only form elements without options
+//       return formElements;
+//   } catch (error) {
+//       console.error("Error fetching all form elements:", error.message);
+//       throw error;
+//   }
+// }
+
 
 module.exports = FormService;
 
