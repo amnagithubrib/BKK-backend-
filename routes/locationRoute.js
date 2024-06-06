@@ -1,11 +1,31 @@
-const express = require('express');
-const LocationController = require('../controller/locationController');
+const express = require("express");
+const { Authenticated } = require("../middleware/registerauth");
+const LocationController = require("../controller/locationController");
 const router = express.Router();
 
-router.post('/location', (req, res) => LocationController.createLocation(req, res));
-router.get('/locations', (req, res) => LocationController.getAllLocations(req, res));
-router.get('/locations/:id', (req, res) => LocationController.getLocationById(req, res));
-router.put('/locations/:id', (req, res) => LocationController.updateLocation(req, res));
-router.delete('/locations/:id', (req, res) => LocationController.deleteLocation(req, res));
+router.post("/location", Authenticated, async (req, res) => {
+    const result = await LocationController.createLocation(req);
+    res.status(result.statusCode).json(result);
+});
+
+router.get("/locations", Authenticated, async (req, res) => {
+    const result = await LocationController.getAllLocations();
+    res.status(result.statusCode).json(result);
+});
+
+router.get("/locations/:id", Authenticated, async (req, res) => {
+    const result = await LocationController.getLocationById(req);
+    res.status(result.statusCode).json(result);
+});
+
+router.put("/locations/:id", Authenticated, async (req, res) => {
+    const result = await LocationController.updateLocation(req);
+    res.status(result.statusCode).json(result);
+});
+
+router.delete("/locations/:id", Authenticated, async (req, res) => {
+    const result = await LocationController.deleteLocation(req);
+    res.status(result.statusCode).json(result);
+});
 
 module.exports = router;

@@ -1,139 +1,64 @@
-
-// const Partners = require('../db/models/partners');
-
-// class PartnersController {
-//     static async createPartner(req, res) {
-//         const { name, contact_info, address } = req.body;
-//         try {
-//             const newPartner = await Partners.query().insert({
-//                 name,
-//                 contact_info,
-//                 address
-//             });
-//             res.status(200).json({ success: true, data: newPartner });
-//         } catch (error) {
-//             console.error("Error creating partner:", error);
-//             res.status(500).json({ success: false, data: null });
-//         }
-//     }
-
-//     static async getAllPartners(req, res) {
-//         try {
-//             const partners = await Partners.query();
-//             res.status(200).json({ success: true, data: partners });
-//         } catch (error) {
-//             console.error("Error fetching all partners:", error);
-//             res.status(500).json({ success: false, data: null });
-//         }
-//     }
-
-//     static async getPartnerById(req, res) {
-//         const { id } = req.params;
-//         try {
-//             const partner = await Partners.query().findById(id);
-//             res.status(200).json({ success: true, data: partner || null });
-//         } catch (error) {
-//             console.error("Error fetching partner by ID:", error);
-//             res.status(500).json({ success: false, data: null });
-//         }
-//     }
-
-//     static async updatePartner(req, res) {
-//         const { id } = req.params;
-//         const { name, contact_info, address } = req.body;
-//         try {
-//             const updatedPartner = await Partners.query().patchAndFetchById(id, {
-//                 name,
-//                 contact_info,
-//                 address
-//             });
-//             res.status(200).json({ success: true, data: updatedPartner || null });
-//         } catch (error) {
-//             console.error("Error updating partner:", error);
-//             res.status(500).json({ success: false, data: null });
-//         }
-//     }
-
-//     static async deletePartner(req, res) {
-//         const { id } = req.params;
-//         try {
-//             const numDeleted = await Partners.query().deleteById(id);
-//             res.status(200).json({ success: true, message: numDeleted ? "Partner deleted successfully" : "Partner not found", data: null });
-//         } catch (error) {
-//             console.error("Error deleting partner:", error);
-//             res.status(500).json({ success: false, data: null });
-//         }
-//     }
-// }
-
-// module.exports = PartnersController;
-
-
-
-
-const Partners = require('../db/models/partners');
+const Partners = require("../db/models/partners");
 
 class PartnersController {
-    static async createPartner(req, res) {
-        const { name, contact_info, address } = req.body;
-        try {
-            const newPartner = await Partners.query().insert({
-                name,
-                contact_info,
-                address
-            });
-            res.status(200).json({ success: true, data: newPartner });
-        } catch (error) {
-            console.error("Error creating partner:", error);
-            res.status(500).json({ success: false, data: null });
-        }
+    static async createPartner(req) {
+        const { name, contactInfo, address } = req.body;
+        const data = { name, contact_info: contactInfo, address };
+        return await this.handleOperation(async () => {
+            const newPartner = await Partners.query().insert(data);
+            return { message: "Partner created successfully", data: newPartner, statusCode: 201 };
+        });
     }
 
-    static async getAllPartners(req, res) {
-        try {
+    static async getAllPartners() {
+        return await this.handleOperation(async () => {
             const partners = await Partners.query();
-            res.status(200).json({ success: true, data: partners });
-        } catch (error) {
-            console.error("Error fetching all partners:", error);
-            res.status(500).json({ success: false, data: null });
-        }
+            return { message: "Partners retrieved successfully", data: partners, statusCode: 200 };
+        });
     }
 
-    static async getPartnerById(req, res) {
+    static async getPartnerById(req) {
         const { id } = req.params;
-        try {
+        return await this.handleOperation(async () => {
             const partner = await Partners.query().findById(id);
-            res.status(200).json({ success: true, data: partner || null });
-        } catch (error) {
-            console.error("Error fetching partner by ID:", error);
-            res.status(500).json({ success: false, data: null });
-        }
+            if (!partner) {
+                return { message: "Partner not found", data: null, statusCode: 404 };
+            }
+            return { message: "Partner retrieved successfully", data: partner, statusCode: 200 };
+        });
     }
 
-    static async updatePartner(req, res) {
+    static async updatePartner(req) {
         const { id } = req.params;
-        const { name, contact_info, address } = req.body;
-        try {
-            const updatedPartner = await Partners.query().patchAndFetchById(id, {
-                name,
-                contact_info,
-                address
-            });
-            res.status(200).json({ success: true, data: updatedPartner || null });
-        } catch (error) {
-            console.error("Error updating partner:", error);
-            res.status(500).json({ success: false, data: null });
-        }
+        const { name, contactInfo, address } = req.body;
+        const data = { name, contact_info: contactInfo, address };
+        return await this.handleOperation(async () => {
+            const updatedPartner = await Partners.query().patchAndFetchById(id, data);
+            if (!updatedPartner) {
+                return { message: "Partner not found", data: null, statusCode: 404 };
+            }
+            return { message: "Partner updated successfully", data: updatedPartner, statusCode: 200 };
+        });
     }
 
-    static async deletePartner(req, res) {
+    static async deletePartner(req) {
         const { id } = req.params;
-        try {
+        return await this.handleOperation(async () => {
             const numDeleted = await Partners.query().deleteById(id);
-            res.status(200).json({ success: true, message: numDeleted ? "Partner deleted successfully" : "Partner not found", data: null });
+            if (numDeleted === 0) {
+                return { message: "Partner not found", data: null, statusCode: 404 };
+            }
+            return { message: "Partner deleted successfully", data: null, statusCode: 200 };
+        });
+    }
+
+    static async handleOperation(operation) {
+        try {
+            return await operation();
         } catch (error) {
-            console.error("Error deleting partner:", error);
-            res.status(500).json({ success: false, data: null });
+            console.error("Error:", error);
+            const statusCode = error.statusCode || 500;
+            return { message: "Internal server error", data: null, statusCode };
         }
     }
 }

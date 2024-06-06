@@ -1,34 +1,36 @@
-const { Model } = require('objection');
-const Locations = require('./location'); 
-const Zone = require('./zone'); 
-class Partners extends Model {
+const { Model } = require("objection");
+const Zone = require("./zone");
+
+class Partner extends Model {
     static get tableName() {
-        return 'partners';
+        return "partners";
     }
+
     static get jsonSchema() {
         return {
-            type: 'object',
-            required: ['name', 'contact_info', 'address'],
+            type: "object",
+            required: ["name", "address"],
             properties: {
-                id: { type: 'integer' },
-                name: { type: 'string' },
-                contact_info: { type: 'string' },
-                address: { type: 'string' }
+                id: { type: "integer" },
+                name: { type: "string" },
+                contactInfo: { type: "string" },
+                address: { type: "string" }
             }
         };
     }
+
     static get relationMappings() {
         return {
-           
-            zone: {
-                relation: Model.HasOneRelation,
+            zones: {
+                relation: Model.HasManyRelation,
                 modelClass: Zone,
                 join: {
-                    from: 'partners.zone_id',
-                    to: 'zones.id'
+                    from: "partners.id",
+                    to: "zones.partner_id"
                 }
-        }
+            }
+        };
     }
-}}
+}
 
-module.exports = Partners;
+module.exports = Partner;

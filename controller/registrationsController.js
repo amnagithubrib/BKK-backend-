@@ -1,7 +1,7 @@
-const Registrations =require('../db/models/registrations');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const Registrations = require("../db/models/registrations");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const registrationsController = {
     // Signup function
@@ -13,7 +13,7 @@ const registrationsController = {
             }
             const existingUser = await Registrations.query().findOne({ email });
             if (existingUser) {
-                return res.status(409).json({ success: false, message: 'Email already in use' });
+                return res.status(409).json({ success: false, message: "Email already in use" });
             }
             const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = await Registrations.query().insert({
@@ -32,21 +32,46 @@ const registrationsController = {
     },
 
     // Login function
-    async login(req, res) {
+    // async login(req, res) {
+    //     try {
+    //         const { email, password } = req.body;
+    //         if (!email || !password) {
+    //             return res.status(400).json({ success: false, message: "Email and password are required." });
+    //         }
+    //         const user = await Registrations.query().findOne({ email });
+    //         if (!user) {
+    //             return res.status(401).json({ success: false, message: 'No user found with this email' });
+    //         }
+    //         const isMatch = await bcrypt.compare(password, user.password);
+    //         if (!isMatch) {
+    //             return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    //         }
+    //         const token = jwt.sign({ id: user.id }, 'amna', { expiresIn: '1h' });
+    //         res.status(200).json({ success: true, message: "Login successful", token });
+    //     } catch (error) {
+    //         console.error("Error during login:", error);
+    //         res.status(500).json({ success: false, message: "Internal server error" });
+    //     }
+    // },
+
+    async login (req, res) {
         try {
             const { email, password } = req.body;
             if (!email || !password) {
                 return res.status(400).json({ success: false, message: "Email and password are required." });
             }
+
             const user = await Registrations.query().findOne({ email });
             if (!user) {
-                return res.status(401).json({ success: false, message: 'No user found with this email' });
+                return res.status(401).json({ success: false, message: "No user found with this email" });
             }
+
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
-                return res.status(401).json({ success: false, message: 'Invalid credentials' });
+                return res.status(401).json({ success: false, message: "Invalid credentials" });
             }
-            const token = jwt.sign({ id: user.id }, 'amna', { expiresIn: '1h' });
+
+            const token = jwt.sign({ id: user.id }, "amna", { expiresIn: "1h" });
             res.status(200).json({ success: true, message: "Login successful", token });
         } catch (error) {
             console.error("Error during login:", error);

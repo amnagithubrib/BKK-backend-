@@ -1,11 +1,9 @@
 // const FormOptions = require('../db/models/formOptions');
 // const FormElements = require('../db/models/formElement');
 
-
 // class FormOptionsService {
 //     static async createFormOptions({ optionText, optionValue, type, element_id}) {
-         
-        
+
 //         const newOption=await FormOptions.query().insert({ optionText, optionValue, type, element_id });
 //         return newOption;
 //     }

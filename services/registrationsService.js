@@ -1,14 +1,14 @@
-const Registrations = require('../db/models/registrations');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const Registrations = require("../db/models/registrations");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const registrationsService = {
     async createUser({ name, email, password }) {
         try {
             const existingUser = await Registrations.query().findOne({ email });
             if (existingUser) {
-                throw new Error('Email already in use');
+                throw new Error("Email already in use");
             }
             const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = await Registrations.query().insert({
@@ -27,13 +27,13 @@ const registrationsService = {
         try {
             const user = await Registrations.query().findOne({ email });
             if (!user) {
-                throw new Error('No user found with this email');
+                throw new Error("No user found with this email");
             }
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
-                throw new Error('Invalid credentials');
+                throw new Error("Invalid credentials");
             }
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
             return { token };
         } catch (error) {
             console.error("Error logging in:", error);

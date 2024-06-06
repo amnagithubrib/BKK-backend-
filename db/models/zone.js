@@ -1,25 +1,110 @@
-const { Model } = require('objection');
-const Locations = require('./location');
-const Partners= require('./partners');  
+// // models/Zone.js
+// const { Model } = require('objection');
+// const Location = require('./Location');
+// const Partner = require('./partners');
 
-class Zones extends Model {
+// class Zone extends Model {
+//     static get tableName() {
+//         return 'zones';
+//     }
+
+//     static get idColumn() {
+//         return 'id';
+//     }
+
+//     static get relationMappings() {
+//         return {
+//             locations: {
+//                 relation: Model.ManyToManyRelation,
+//                 modelClass: Location,
+//                 join: {
+//                     from: 'zones.id',
+//                     through: {
+//                         from: 'zone_locations.zone_id',
+//                         to: 'zone_locations.location_id'
+//                     },
+//                     to: 'locations.location_id'
+//                 }
+//             },
+//             partner: {
+//                 relation: Model.BelongsToOneRelation,
+//                 modelClass: Partner,
+//                 join: {
+//                     from: 'zones.partner_id',
+//                     to: 'partners.id'
+//                 }
+//             }
+//         };
+//     }
+// }
+
+// module.exports = Zone;
+
+// // models/Zone.js
+// const { Model } = require("objection");
+// const Location = require("./locations");
+// const Partner = require("./partners");
+
+// class Zone extends Model {
+//     static get tableName() {
+//         return "zones";
+//     }
+
+//     static get idColumn() {
+//         return "id";
+//     }
+
+//     static get relationMappings() {
+//         return {
+//             locations: {
+//                 relation: Model.ManyToManyRelation,
+//                 modelClass: Location,
+//                 join: {
+//                     from: "zones.id",
+//                     through: {
+//                         from: "zone_locations.zone_id",
+//                         to: "zone_locations.location_id"
+//                     },
+//                     to: "locations.location_id"
+//                 }
+//             },
+//             partner: {
+//                 relation: Model.BelongsToOneRelation,
+//                 modelClass: Partner,
+//                 join: {
+//                     from: "zones.partner_id",
+//                     to: "partners.id"
+//                 }
+//             }
+//         };
+//     }
+// }
+
+// module.exports = Zone;
+// models/Zone.js
+const { Model } = require("objection");
+const Location = require("./locations");
+const Partner = require("./partners");
+
+class Zone extends Model {
     static get tableName() {
-        return 'zones';
+        return "zones";
     }
 
     static get idColumn() {
-        return 'id'; 
+        return "id";
     }
 
     static get jsonSchema() {
         return {
-            type: 'object',
-            required: ['name', 'type', 'geo_location_data'],
+            type: "object",
+            required: ["name"],
             properties: {
-                id: { type: 'integer' },
-                name: { type: 'string' },
-                type: { type: 'string' },
-                geo_location_data: { type: 'string', contentEncoding: 'text' }
+                id: { type: "integer" },
+                partner_id: { type: "integer" },
+                name: { type: "string", minLength: 1, maxLength: 255 },
+                type: { type: "string", maxLength: 255 },
+                geo_location_data: { type: "string" }
             }
         };
     }
@@ -27,23 +112,27 @@ class Zones extends Model {
     static get relationMappings() {
         return {
             locations: {
-                relation: Model.HasManyRelation,
-                modelClass: Locations,
+                relation: Model.ManyToManyRelation,
+                modelClass: Location,
                 join: {
-                    from: 'zones.id',
-                    to: 'locations.zone_id'
+                    from: "zones.id",
+                    through: {
+                        from: "zone_locations.zone_id",
+                        to: "zone_locations.location_id"
+                    },
+                    to: "locations.location_id"
                 }
             },
-            partners: {
-                relation: Model.HasOneRelation,
-                modelClass: Partners,
+            partner: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Partner,
                 join: {
-                    from: 'zones.id',
-                    to: 'partners.zone_id'
+                    from: "zones.partnerId",
+                    to: "partners.id"
                 }
-            },
+            }
         };
     }
 }
 
-module.exports = Zones;
+module.exports = Zone;

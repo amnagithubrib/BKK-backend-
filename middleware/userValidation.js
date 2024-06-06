@@ -1,11 +1,16 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 const signupSchema = Joi.object({
-    number: Joi.number().integer().required(),
-    pin: Joi.number().integer().required(),
-    
-    
-     
+    number: Joi.number().integer().required().custom((value, helpers) => {
+        const stringValue = value.toString();
+
+        if (stringValue.length === 12 && stringValue.startsWith("923")) {
+            return value; // Everything is fine
+        }
+
+        return helpers.error("any.invalid");
+    }),
+    pin: Joi.number().integer().required()
 });
 
 const loginSchema = Joi.object({

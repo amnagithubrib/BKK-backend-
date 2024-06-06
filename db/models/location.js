@@ -1,22 +1,66 @@
-const { Model } = require('objection');
-const Zones=require('./zone');
-class Locations extends Model {
+// const { Model } = require('objection');
+
+// class Location extends Model {
+//     static get tableName() {
+//         return 'locations';
+//     }
+
+//     static get idColumn() {
+//         return 'location_id';
+//     }
+
+//     static get relationMappings() {
+//         const Zone = require('./zone');
+
+//         return {
+//             zones: {
+//                 relation: Model.ManyToManyRelation,
+//                 modelClass: Zone,
+//                 join: {
+//                     from: 'locations.location_id',
+//                     through: {
+//                         from: 'zone_locations.location_id',
+//                         to: 'zone_locations.zone_id'
+//                     },
+//                     to: 'zones.id'
+//                 }
+//             }
+//         };
+//     }
+// }
+
+// module.exports = Location;
+
+// models/Location.js
+const { Model } = require("objection");
+
+class Location extends Model {
     static get tableName() {
-        return 'locations';
+        return "locations";
     }
-    static get jsonSchema() {
+
+    static get idColumn() {
+        return "location_id";
+    }
+
+    static get relationMappings() {
+        const Zone = require("./zone");
+
         return {
-            type: 'object',
-            required: ['zone_id', 'latitude', 'longitude'],
-            properties: {
-                location_id: { type: 'integer' },
-                zone_id: { type: 'integer' },
-                latitude: { type: 'number', format: 'float' },
-                longitude: { type: 'number', format: 'float' },
-                geo_polygon: { type: ['string', 'null'], contentEncoding: 'utf-8', contentMediaType: 'application/json', description: 'Optional, stores custom location data in GeoJSON format' }
+            zones: {
+                relation: Model.ManyToManyRelation,
+                modelClass: Zone,
+                join: {
+                    from: "locations.location_id",
+                    through: {
+                        from: "zone_locations.location_id",
+                        to: "zone_locations.zone_id"
+                    },
+                    to: "zones.id"
+                }
             }
         };
     }
-    
 }
-module.exports = Locations;
+
+module.exports = Location;

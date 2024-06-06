@@ -1,12 +1,19 @@
-
-const express = require('express');
-const ZoneController = require('../controller/ZoneController');  // Ensure this path is correct
+const express = require("express");
+const zoneController = require("../controller/zoneController");
+const { Authenticated } = require("../middleware/registerauth");
 const router = express.Router();
 
-router.post('/zone', (req, res) => ZoneController.createZone(req, res));
-router.get('/zones', (req, res) => ZoneController.getAllZones(req, res));
-router.get('/zones/:id', (req, res) => ZoneController.getZoneById(req, res));
-router.put('/zones/:id', (req, res) => ZoneController.updateZone(req, res));
-router.delete('/zones/:id', (req, res) => ZoneController.deleteZone(req, res));
+router.post("/zones", zoneController.createZone);
+router.get("/zones", zoneController.getAllZones);
+router.get("/zones/:id", zoneController.getZoneById);
+router.get("/zones/:id/location", zoneController.getZoneWithLocations);
+router.get("/zones/:id/locations", zoneController.getLocationsByZoneId) // New route for fetching zone with locations
+router.put("/zones/:id", Authenticated, zoneController.updateZone);
+router.delete("/zones/:id", Authenticated, zoneController.deleteZone);
+
+router.post("/zoness", zoneController.createZoneWithLocations);
+router.get("/zoness/:id", zoneController.getZoneWithLocations);
+
+// current code
 
 module.exports = router;

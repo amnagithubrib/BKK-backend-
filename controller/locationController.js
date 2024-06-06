@@ -1,62 +1,57 @@
-const LocationService = require('../services/locationService');
+const LocationService = require("../services/locationService");
 
 class LocationController {
-    static async createLocation(req, res) {
-        try {
-            const { zone_id, latitude, longitude, geo_polygon } = req.body;
-            const newLocation = await LocationService.createLocation({ zone_id, latitude, longitude, geo_polygon });
-            res.status(200).json({ success: true, data: newLocation });
-        } catch (error) {
-            console.error("Error creating location:", error);
-            res.status(500).json({ success: false, data: null });
-        }
+    static async createLocation(req) {
+        const { name, latitude, longitude, geoPolygon, zoneId } = req.body;
+        const data = { name, latitude, longitude, geoPolygon, zoneId };
+        return await this.handleOperation(async () => {
+            const newLocation = await LocationService.createLocation(data);
+            return { message: "Location created successfully", data: newLocation, statusCode: 201 };
+        });
     }
 
-    static async getAllLocations(req, res) {
-        try {
+    static async getAllLocations() {
+        return await this.handleOperation(async () => {
             const locations = await LocationService.getAllLocations();
-            res.status(200).json({ success: true, data: locations });
-        } catch (error) {
-            console.error("Error fetching all locations:", error);
-            res.status(500).json({ success: false, data: null });
-        }
+            return { message: "Locations retrieved successfully", data: locations, statusCode: 200 };
+        });
     }
 
-    static async getLocationById(req, res) {
+    static async getLocationById(req) {
         const { id } = req.params;
-        try {
+        return await this.handleOperation(async () => {
             const location = await LocationService.getLocationById(id);
-            res.status(200).json({ success: true, data: location || null });
-        } catch (error) {
-            console.error("Error fetching location by ID:", error);
-            res.status(500).json({ success: false, data: null });
-        }
+            return { message: "Location retrieved successfully", data: location || null, statusCode: location ? 200 : 404 };
+        });
     }
 
-    static async updateLocation(req, res) {
+    static async updateLocation(req) {
         const { id } = req.params;
-        const { zone_id, latitude, longitude, geo_polygon } = req.body;
-        try {
-            const updatedLocation = await LocationService.updateLocation(id, { zone_id, latitude, longitude, geo_polygon });
-            res.status(200).json({ success: true, data: updatedLocation || null });
-        } catch (error) {
-            console.error("Error updating location:", error);
-            res.status(500).json({ success: false, data: null });
-        }
+        const { name, latitude, longitude, geoPolygon, zoneId } = req.body;
+        const data = { name, latitude, longitude, geoPolygon, zoneId };
+        return await this.handleOperation(async () => {
+            const updatedLocation = await LocationService.updateLocation(id, data);
+            return { message: "Location updated successfully", data: updatedLocation || null, statusCode: updatedLocation ? 200 : 404 };
+        });
     }
 
-    static async deleteLocation(req, res) {
+    static async deleteLocation(req) {
         const { id } = req.params;
-        try {
+        return await this.handleOperation(async () => {
             const numDeleted = await LocationService.deleteLocation(id);
-            if (numDeleted) {
-                res.status(200).json({ success: true, message: "Location deleted successfully", data: null });
-            } else {
-                res.status(404).json({ success: false, message: "Location not found", data: null });
-            }
+            return numDeleted
+                ? { message: "Location deleted successfully", data: null, statusCode: 200 }
+                : { message: "Location not found", data: null, statusCode: 404 };
+        });
+    }
+
+    static async handleOperation(operation) {
+        try {
+            return await operation();
         } catch (error) {
-            console.error("Error deleting location:", error);
-            res.status(500).json({ success: false, data: null });
+            console.error("Error:", error);
+            const statusCode = error.statusCode || 500;
+            return { message: "Internal server error", data: null, statusCode };
         }
     }
 }
