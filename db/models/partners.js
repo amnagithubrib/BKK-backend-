@@ -1,5 +1,4 @@
 const { Model } = require("objection");
-const Zone = require("./zone");
 
 class Partner extends Model {
     static get tableName() {
@@ -9,12 +8,12 @@ class Partner extends Model {
     static get jsonSchema() {
         return {
             type: "object",
-            required: ["name", "address"],
             properties: {
                 id: { type: "integer" },
                 name: { type: "string" },
-                contactInfo: { type: "string" },
-                address: { type: "string" }
+                email: { type: "string" },
+                address: { type: "string" },
+                password: { type: "string" }
             }
         };
     }
@@ -23,10 +22,10 @@ class Partner extends Model {
         return {
             zones: {
                 relation: Model.HasManyRelation,
-                modelClass: Zone,
+                modelClass: require("./zone"),
                 join: {
                     from: "partners.id",
-                    to: "zones.partner_id"
+                    to: "zones.partnerId"
                 }
             }
         };

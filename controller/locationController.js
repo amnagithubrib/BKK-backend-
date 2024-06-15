@@ -1,9 +1,8 @@
 const LocationService = require("../services/locationService");
-
 class LocationController {
     static async createLocation(req) {
-        const { name, latitude, longitude, geoPolygon, zoneId } = req.body;
-        const data = { name, latitude, longitude, geoPolygon, zoneId };
+        const { name, latitude, longitude, geoPolygon } = req.body;
+        const data = { name, latitude, longitude, geoPolygon };
         return await this.handleOperation(async () => {
             const newLocation = await LocationService.createLocation(data);
             return { message: "Location created successfully", data: newLocation, statusCode: 201 };
@@ -22,26 +21,6 @@ class LocationController {
         return await this.handleOperation(async () => {
             const location = await LocationService.getLocationById(id);
             return { message: "Location retrieved successfully", data: location || null, statusCode: location ? 200 : 404 };
-        });
-    }
-
-    static async updateLocation(req) {
-        const { id } = req.params;
-        const { name, latitude, longitude, geoPolygon, zoneId } = req.body;
-        const data = { name, latitude, longitude, geoPolygon, zoneId };
-        return await this.handleOperation(async () => {
-            const updatedLocation = await LocationService.updateLocation(id, data);
-            return { message: "Location updated successfully", data: updatedLocation || null, statusCode: updatedLocation ? 200 : 404 };
-        });
-    }
-
-    static async deleteLocation(req) {
-        const { id } = req.params;
-        return await this.handleOperation(async () => {
-            const numDeleted = await LocationService.deleteLocation(id);
-            return numDeleted
-                ? { message: "Location deleted successfully", data: null, statusCode: 200 }
-                : { message: "Location not found", data: null, statusCode: 404 };
         });
     }
 

@@ -9,8 +9,10 @@ const ZoneRoute = require("./routes/zoneRoute");
 const LocationRoute = require("./routes/locationRoute");
 const PartnerRoute = require("./routes/partnerRoute");
 const formRoute = require("./routes/formRoute");
-const setupSwagger = require("./swaggger/index");
-// const optionRoute=require('./routes/optionRoute');
+const setupSwagger = require("./swagger/index");
+const swaggerFile = require("./swagger-output.json");
+const swaggerUi = require("swagger-ui-express");
+const router = express.Router();
 dbSetup();
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3002", "http://localhost:3001"];
 
@@ -24,13 +26,9 @@ const corsOptions = {
     },
     optionsSuccessStatus: 200
 };
-
-// app.post('*', bodyParser.json());
+router.get("/swagger.json", (req, res) => res.json(swaggerFile));
 app.use(bodyParser.json())
 app.use(express.json());
-
-// Configure CORS
-
 app.use(cors(corsOptions));
 app.use("/", userRoute);
 app.use("/", ZoneRoute);
@@ -38,7 +36,6 @@ app.use("/", LocationRoute);
 app.use("/", PartnerRoute);
 app.use("/", formRoute);
 app.use("/", registrationsRoute);
-
-setupSwagger(app);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 // app.use("/",optionRoute);
 app.listen(3001, () => console.log("Server is running on http://localhost:3001"));

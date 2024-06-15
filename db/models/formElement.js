@@ -29,7 +29,7 @@ class FormElement extends Model {
                 modelClass: FormOption,
                 join: {
                     from: "formElements.elementId",
-                    to: "formOptions.element_id"
+                    to: "formOptions.elementId"
                 }
             }
         };

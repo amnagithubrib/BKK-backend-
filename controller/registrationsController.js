@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const registrationsController = {
-    // Signup function
     async signup(req, res) {
         try {
             const { name, email, password } = req.body;
@@ -30,30 +29,6 @@ const registrationsController = {
             res.status(500).json({ success: false, message: "Internal server error" });
         }
     },
-
-    // Login function
-    // async login(req, res) {
-    //     try {
-    //         const { email, password } = req.body;
-    //         if (!email || !password) {
-    //             return res.status(400).json({ success: false, message: "Email and password are required." });
-    //         }
-    //         const user = await Registrations.query().findOne({ email });
-    //         if (!user) {
-    //             return res.status(401).json({ success: false, message: 'No user found with this email' });
-    //         }
-    //         const isMatch = await bcrypt.compare(password, user.password);
-    //         if (!isMatch) {
-    //             return res.status(401).json({ success: false, message: 'Invalid credentials' });
-    //         }
-    //         const token = jwt.sign({ id: user.id }, 'amna', { expiresIn: '1h' });
-    //         res.status(200).json({ success: true, message: "Login successful", token });
-    //     } catch (error) {
-    //         console.error("Error during login:", error);
-    //         res.status(500).json({ success: false, message: "Internal server error" });
-    //     }
-    // },
-
     async login (req, res) {
         try {
             const { email, password } = req.body;
@@ -65,7 +40,6 @@ const registrationsController = {
             if (!user) {
                 return res.status(401).json({ success: false, message: "No user found with this email" });
             }
-
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(401).json({ success: false, message: "Invalid credentials" });
@@ -75,18 +49,6 @@ const registrationsController = {
             res.status(200).json({ success: true, message: "Login successful", token });
         } catch (error) {
             console.error("Error during login:", error);
-            res.status(500).json({ success: false, message: "Internal server error" });
-        }
-    },
-
-    // Test Route (possibly for checking authentication middleware)
-    async testRoute(req, res) {
-        try {
-            console.log("Secret route accessed");
-            console.log(req.user);
-            res.status(200).json({ success: true, message: "Access granted to secret route", user: req.user });
-        } catch (error) {
-            console.error("Error in test route:", error);
             res.status(500).json({ success: false, message: "Internal server error" });
         }
     }

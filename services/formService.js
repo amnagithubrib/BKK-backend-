@@ -5,14 +5,13 @@ class FormService {
 
         try {
             return await FormElement.transaction(async (trx) => {
-                // Insert the form element
                 const insertedFormElement = await FormElement.query(trx).insertGraph({
                     ...formElementData,
                     options: formOptionData.map(option => ({
                         optionText: option.optionText,
                         optionValue: option.optionValue,
                         // type: option.type,
-                        element_id: formElementData.elementId
+                        elementId: formElementData.elementId
                     }))
                 });
 
@@ -34,9 +33,9 @@ class FormService {
         }
     }
 
-    // Add the new method to fetch all form elements
     static async getAllFormElements() {
         try {
+            console.log("service");
             const formElements = await FormElement.query().withGraphFetched("options");
             return formElements;
         } catch (error) {
@@ -45,15 +44,4 @@ class FormService {
         }
     }
 }
-
-// static async getAllFormElements() {
-//   try {
-//       const formElements = await FormElement.query(); // Fetch only form elements without options
-//       return formElements;
-//   } catch (error) {
-//       console.error("Error fetching all form elements:", error.message);
-//       throw error;
-//   }
-// }
-
 module.exports = FormService;

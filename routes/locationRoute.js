@@ -18,14 +18,4 @@ router.get("/locations/:id", Authenticated, async (req, res) => {
     res.status(result.statusCode).json(result);
 });
 
-router.put("/locations/:id", Authenticated, async (req, res) => {
-    const result = await LocationController.updateLocation(req);
-    res.status(result.statusCode).json(result);
-});
-
-router.delete("/locations/:id", Authenticated, async (req, res) => {
-    const result = await LocationController.deleteLocation(req);
-    res.status(result.statusCode).json(result);
-});
-
 module.exports = router;

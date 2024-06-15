@@ -1,6 +1,5 @@
 const { Model } = require("objection");
 const FormElement = require("./formElement");
-
 class FormOption extends Model {
     static get tableName() {
         return "formOptions";
@@ -9,13 +8,13 @@ class FormOption extends Model {
     static get jsonSchema() {
         return {
             type: "object",
-            required: ["optionText", "optionValue", "element_id"],
+            required: ["optionText", "optionValue"],
             properties: {
                 id: { type: "integer" },
                 optionText: { type: "string" },
                 optionValue: { type: "string" },
                 type: { type: "string", enum: ["text", "checkbox", "radio", "switch"] },
-                element_id: { type: "integer" }
+                elementId: { type: "integer" }
             }
         };
     }
@@ -26,7 +25,7 @@ class FormOption extends Model {
                 relation: Model.BelongsToOneRelation,
                 modelClass: FormElement,
                 join: {
-                    from: "formOptions.element_id",
+                    from: "formOptions.elementId",
                     to: "formElements.elementId"
                 }
             }

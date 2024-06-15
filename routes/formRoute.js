@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const FormController = require("../controller/formController");
-const { isAuthenticated } = require("../middleware/auth");
-router.post("/form", isAuthenticated, async function(req, res) {
+const { Authenticated } = require("../middleware/registerauth");
+router.post("/form", Authenticated, async function(req, res) {
     try {
         const result = await FormController.createFormElement(req);
         res.statusCode = 201;
