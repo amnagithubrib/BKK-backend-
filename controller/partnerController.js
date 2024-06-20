@@ -12,6 +12,17 @@ class PartnersController {
         });
     }
 
+    static async createPartner(req, res) {
+        const { name, email, address } = req.body;
+        try {
+            const newPartner = await Partners.query().insert({ name, email, address });
+            res.status(201).json({ message: "Partner created successfully", data: newPartner });
+        } catch (error) {
+            console.error("Error creating partner:", error);
+            res.status(500).json({ message: "Failed to create partner", error: error.message });
+        }
+    }
+
     static async loginPartner(req, res) {
         try {
             const { email } = req.body;
