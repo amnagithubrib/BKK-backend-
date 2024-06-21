@@ -27,7 +27,7 @@ class Location extends Model {
         return {
             zones: {
                 relation: Model.ManyToManyRelation,
-                modelClass: require("./zone"), // Note: require() statement is now used dynamically
+                modelClass: require("./zone"),
                 join: {
                     from: "locations.location_id",
                     through: {

@@ -1,6 +1,6 @@
-require("dotenv").config(); // Load environment variables from .env file
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const User = require("../db/models/users"); // Assuming you have a User model
+const User = require("../db/models/users");
 
 exports.isAuthenticated = async (req, res, next) => {
     try {
@@ -11,18 +11,12 @@ exports.isAuthenticated = async (req, res, next) => {
         }
 
         const token = authHeader.split(" ")[1];
-
-        // Verify the token using the environment variable JWT_SECRET
         const decodedData = jwt.verify(token, "amna");
-
-        // Find the user based on the decoded user ID
         const user = await User.query().findById(decodedData.id);
 
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-
-        // Attach the user object to the request
         req.user = user;
 
         next();

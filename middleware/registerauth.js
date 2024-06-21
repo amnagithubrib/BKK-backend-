@@ -1,6 +1,6 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const Partners = require("../db/models/partners"); // Adjust the path as necessary
+const Partners = require("../db/models/partners");
 
 exports.Authenticated = async (req, res, next) => {
     try {
@@ -20,7 +20,6 @@ exports.Authenticated = async (req, res, next) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
 
-        // Attach the user object to the request
         req.user = user;
 
         next();

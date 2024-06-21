@@ -5,7 +5,7 @@ const signupSchema = Joi.object({
         const stringValue = value.toString();
 
         if (stringValue.length === 12 && stringValue.startsWith("923")) {
-            return value; // Everything is fine
+            return value;
         }
 
         return helpers.error("any.invalid");

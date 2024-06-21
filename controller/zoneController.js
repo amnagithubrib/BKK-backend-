@@ -22,8 +22,6 @@ const zoneService = require("../services/zoneService");
 async function createZone(req, res) {
     try {
         const { name, type, geoLocationData, partnerId, locationIds } = req.body;
-
-        // Call the service method to create the zone with locations
         const zone = await zoneService.createZoneWithLocations({ name, type, geoLocationData, partnerId, locationIds });
 
         res.status(201).json(zone);
