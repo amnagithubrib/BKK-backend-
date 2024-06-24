@@ -1,6 +1,6 @@
 const express = require("express");
 const PartnersController = require("../controller/partnerController");
-const { Authenticated } = require("../middleware/registerauth");
+const { Authenticated, Authorized } = require("../middleware/registerauth");
 
 const router = express.Router();
 
@@ -8,7 +8,7 @@ router.get("/partners", Authenticated, async (req, res) => {
     const result = await PartnersController.getAllPartners();
     res.status(result.statusCode).json(result);
 });
-router.post("/CreatePartners", Authenticated, PartnersController.createPartner);// yhan par
+router.post("/CreatePartners", Authenticated, Authorized("admin"), PartnersController.createPartner);
 router.post("/logoutPartner", PartnersController.logoutPartner);
 router.post("/registerPartners", PartnersController.registerPartner);
 router.post("/loginPartners", PartnersController.loginPartner);

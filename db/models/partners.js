@@ -8,12 +8,14 @@ class Partner extends Model {
     static get jsonSchema() {
         return {
             type: "object",
+            required: ["name", "email", "address"],
             properties: {
                 id: { type: "integer" },
                 name: { type: "string" },
                 email: { type: "string" },
                 address: { type: "string" },
-                password: { type: "string" }
+                password: { type: "string" },
+                role: { type: "string", default: "partner" }
             }
         };
     }
@@ -29,6 +31,12 @@ class Partner extends Model {
                 }
             }
         };
+    }
+
+    async $beforeInsert() {
+        if (!this.role) {
+            this.role = "partner";
+        }
     }
 }
 

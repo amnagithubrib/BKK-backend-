@@ -5,11 +5,14 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 class PartnersController {
-    static async getAllPartners() {
-        return await this.handleOperation(async () => {
+    static async getAllPartners(req, res) {
+        try {
             const partners = await Partners.query();
-            return { message: "Partners retrieved successfully", data: partners, statusCode: 200 };
-        });
+            res.status(200).json({ message: "Partners retrieved successfully", data: partners });
+        } catch (error) {
+            console.error("Error retrieving partners:", error);
+            res.status(500).json({ message: "Internal server error", error: error.message });
+        }
     }
 
     static async createPartner(req, res) {
@@ -25,8 +28,8 @@ class PartnersController {
 
     static async loginPartner(req, res) {
         try {
-            const { email } = req.body;
-            if (!email) {
+            const { email, password } = req.body;
+            if (!email || !password) {
                 return res.status(400).json({ success: false, message: "Email and password are required." });
             }
 
@@ -35,7 +38,13 @@ class PartnersController {
                 return res.status(401).json({ success: false, message: "No partner found with this email" });
             }
 
-            const token = jwt.sign({ id: partner.id }, "amna", { expiresIn: "1h" });
+            const isPasswordValid = await bcrypt.compare(password, partner.password);
+            if (!isPasswordValid) {
+                return res.status(401).json({ success: false, message: "Invalid password" });
+            }
+
+            const secret = process.env.JWT_SECRET || "amna";
+            const token = jwt.sign({ id: partner.id, role: partner.role }, secret, { expiresIn: "1h" });
             res.status(200).json({ success: true, message: "Login successful", token, partner });
         } catch (error) {
             console.error("Error during login:", error);
@@ -45,41 +54,48 @@ class PartnersController {
 
     static async registerPartner(req, res) {
         try {
-            const { name, email, address, password } = req.body;
+            const { name, email, address, password, role = "partner" } = req.body;
             if (!name || !email || !address || !password) {
                 return res.status(400).json({ success: false, message: "All fields are required." });
             }
+
             const existingUser = await Partners.query().findOne({ email });
             if (existingUser) {
                 return res.status(409).json({ success: false, message: "Email already in use" });
             }
-            const hashedPassword = await bcrypt.hash(password, 10);
 
+            const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = await Partners.query().insert({
                 name,
                 email,
                 address,
-                password: hashedPassword
+                password: hashedPassword,
+                role
             });
-            if (!newUser) {
-                return res.status(200).json({ success: true, message: "Signup successful" });
-            }
-            res.status(201).json({ success: true, data: { id: newUser.id, name: newUser.name, address: newUser.address } });
+
+            res.status(201).json({
+                success: true,
+                data: { id: newUser.id, name: newUser.name, address: newUser.address, role: newUser.role },
+                message: "Signup successful"
+            });
         } catch (error) {
             console.error("Error during signup:", error);
             res.status(500).json({ success: false, message: "Internal server error" });
         }
     }
 
-    static async getPartnerById(req) {
+    static async getPartnerById(req, res) {
         const { id } = req.params;
-        return await this.handleOperation(async () => {
+        try {
             const partner = await Partners.query().findById(id);
             if (!partner) {
-                return { message: "Partner not found", data: null, statusCode: 404 };
+                return res.status(404).json({ message: "Partner not found" });
             }
-            return { message: "Partner retrieved successfully", data: partner, statusCode: 200 };
-        });
+            res.status(200).json({ message: "Partner retrieved successfully", data: partner });
+        } catch (error) {
+            console.error("Error retrieving partner:", error);
+            res.status(500).json({ message: "Internal server error", error: error.message });
+        }
     }
 
     static async handleOperation(operation) {
@@ -102,4 +118,5 @@ class PartnersController {
         }
     }
 }
+
 module.exports = PartnersController;
