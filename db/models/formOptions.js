@@ -13,7 +13,7 @@ class FormOption extends Model {
                 id: { type: "integer" },
                 optionText: { type: "string" },
                 optionValue: { type: "string" },
-                type: { type: "string", enum: ["text", "checkbox", "radio", "switch"] },
+                type: { type: "string", enum: ["text", "checkbox", "radio", "switch", "date", "time"] },
                 elementId: { type: "integer" }
             }
         };

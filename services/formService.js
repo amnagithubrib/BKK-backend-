@@ -2,7 +2,7 @@ const FormElement = require("../db/models/formElement");
 class FormService {
     static async createFormElementWithOption(data) {
         const { formElementData, formOptionData } = data;
-
+        // console.log("Received formElementData:", formElementData);
         try {
             return await FormElement.transaction(async (trx) => {
                 const insertedFormElement = await FormElement.query(trx).insertGraph({

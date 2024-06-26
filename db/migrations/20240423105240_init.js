@@ -48,16 +48,23 @@ exports.up = function (knex) {
         .createTable("formElements", table => {
             table.increments("elementId");
             table.string("elementLabel").notNullable();
-            table.enum("elementType", ["text", "checkbox", "radio", "switch"]).notNullable();
+            table.enum("elementType", ["text", "checkbox", "radio", "switch", "date", "time", "image", "audio", "vedio"]).notNullable();
+            table.dateTime("dateCreated").notNullable().defaultTo(knex.fn.now());
             table.boolean("isRequired").notNullable();
-            table.timestamps(true, true);
+            // table.string("image");
+            table.date("selectedDate").nullable();
+            table.time("selectedTime").nullable();
+            // table.string("picture").nullable();
+            // table.string("audio").nullable();
+            // table.string("video").nullable();
+            // table.timestamps(true, true);
         })
         .createTable("formOptions", table => {
             table.increments("id");
             table.integer("elementId").unsigned().references("elementId").inTable("formElements").onDelete("CASCADE");
             table.string("optionText").notNullable();
             table.string("optionValue").notNullable();
-            table.timestamps(true, true);
+            // table.timestamps(true, true);
         });
 };
 

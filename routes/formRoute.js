@@ -2,7 +2,21 @@ const express = require("express");
 const router = express.Router();
 const FormController = require("../controller/formController");
 const { Authenticated } = require("../middleware/registerauth");
-router.post("/form", Authenticated, async function(req, res) {
+const uploadMiddleware = require("../middleware/uploadMiddleWare")
+const multer = require("multer");
+const path = require("path");
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, "../uploads/"));
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + "-" + file.originalname);
+    }
+});
+
+const upload = multer({ storage });
+
+router.post("/form", Authenticated, upload.single("image"), async function(req, res) {
     try {
         const result = await FormController.createFormElement(req);
         res.statusCode = 201;
